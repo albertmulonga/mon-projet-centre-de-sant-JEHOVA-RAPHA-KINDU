@@ -1,8 +1,20 @@
 <?php
 /**
  * Page d'accueil - Centre Médical Jéhova Rapha de Kindu
+ * Redirect vers le splash screen
  */
+header('Location: splash.php');
+exit;
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="refresh" content="0;url=splash.php">
+</head>
+<body>
+<p>Redirection vers <a href="splash.php">Splash Screen</a></p>
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
