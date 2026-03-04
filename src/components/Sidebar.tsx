@@ -23,6 +23,14 @@ const menuItems: MenuSection[] = [
     ]
   },
   {
+    section: "RÉCEPTION",
+    items: [
+      { href: "/dashboard/patients", icon: "📝", label: "Enregistrer Patient" },
+      { href: "/dashboard/patients", icon: "📋", label: "Admissions" },
+      { href: "/dashboard/patients", icon: "📅", label: "Rendez-vous" },
+    ]
+  },
+  {
     section: "GESTION MÉDICALE",
     items: [
       { href: "/dashboard/patients", icon: "👥", label: "Patients" },
@@ -56,6 +64,7 @@ const roleIcons: Record<string, string> = {
   caissier: "💰",
   laborantin: "🔬",
   pharmacien: "💊",
+  receptionniste: "🖥️",
 };
 
 const roleLabels: Record<string, string> = {
@@ -65,6 +74,7 @@ const roleLabels: Record<string, string> = {
   caissier: "Caissier(e)",
   laborantin: "Laborantin(e)",
   pharmacien: "Pharmacien(ne)",
+  receptionniste: "Réceptionniste",
 };
 
 export default function Sidebar() {
@@ -77,10 +87,20 @@ export default function Sidebar() {
     try { return JSON.parse(stored); } catch { return null; }
   });
   const [collapsed, setCollapsed] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmYes = () => {
+    setShowLogoutConfirm(false);
     sessionStorage.removeItem("hospital_user");
-    router.push("/login");
+    router.push("/");
+  };
+
+  const handleConfirmNo = () => {
+    setShowLogoutConfirm(false);
   };
 
   const isActive = (href: string, exact?: boolean) => {
@@ -156,7 +176,7 @@ export default function Sidebar() {
                 const active = isActive(item.href, item.exact);
                 return (
                   <Link
-                    key={item.href}
+                    key={item.href + item.label}
                     href={item.href}
                     className={`sidebar-nav-item ${active ? "active" : ""} ${collapsed ? "collapsed" : ""}`}
                     title={collapsed ? item.label : undefined}
@@ -176,7 +196,7 @@ export default function Sidebar() {
         {/* Logout */}
         <div className="sidebar-footer">
           <button
-            onClick={handleLogout}
+            onClick={confirmLogout}
             className={`sidebar-logout ${collapsed ? "collapsed" : ""}`}
             title="Déconnexion"
           >
@@ -185,6 +205,35 @@ export default function Sidebar() {
           </button>
         </div>
       </aside>
+
+      {/* Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: "#fef2f2" }}>
+                <span className="text-3xl">🚪</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Voulez-vous quitter l&apos;application ?</h3>
+              <p className="text-gray-500 text-sm mb-6">Vous serez déconnecté et redirigé vers la page d&apos;accueil.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleConfirmNo}
+                  className="flex-1 btn btn-outline py-3"
+                >
+                  ❌ Non
+                </button>
+                <button
+                  onClick={handleConfirmYes}
+                  className="flex-1 btn btn-danger py-3"
+                >
+                  ✅ Oui, quitter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -48,6 +48,7 @@ const roleColors: Record<string, string> = {
   "Caissier": "badge-warning",
   "Laborantin": "badge-gray",
   "Pharmacien": "badge-gray",
+  "Réceptionniste": "badge-purple",
 };
 
 const roleIcons: Record<string, string> = {
@@ -57,6 +58,7 @@ const roleIcons: Record<string, string> = {
   "Caissier": "💰",
   "Laborantin": "🔬",
   "Pharmacien": "💊",
+  "Réceptionniste": "🖥️",
 };
 
 const rolePermissions: Record<string, string[]> = {
@@ -66,6 +68,7 @@ const rolePermissions: Record<string, string[]> = {
   "Caissier": ["factures", "paiements"],
   "Laborantin": ["laboratoire"],
   "Pharmacien": ["medicaments", "prescriptions"],
+  "Réceptionniste": ["patients", "admissions", "rendez-vous", "accueil"],
 };
 
 export default function UtilisateursPage() {
@@ -163,6 +166,7 @@ export default function UtilisateursPage() {
           { role: "Caissier", icon: "💰", color: "#f59e0b" },
           { role: "Laborantin", icon: "🔬", color: "#8b5cf6" },
           { role: "Pharmacien", icon: "💊", color: "#06b6d4" },
+          { role: "Réceptionniste", icon: "🖥️", color: "#ec4899" },
         ].map((r) => (
           <div key={r.role} className="stat-card text-center p-4">
             <div className="text-2xl mb-1">{r.icon}</div>
@@ -184,6 +188,7 @@ export default function UtilisateursPage() {
             <option>Caissier</option>
             <option>Laborantin</option>
             <option>Pharmacien</option>
+            <option>Réceptionniste</option>
           </select>
         </div>
         <div className="overflow-x-auto">
@@ -335,6 +340,7 @@ export default function UtilisateursPage() {
                     <option>Caissier</option>
                     <option>Laborantin</option>
                     <option>Pharmacien</option>
+                    <option>Réceptionniste</option>
                     <option>Administrateur</option>
                   </select>
                 </div>
