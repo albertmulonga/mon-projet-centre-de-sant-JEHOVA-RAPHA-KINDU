@@ -433,3 +433,154 @@ body {
   z-index: 10;
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
+
+/* ===================== SIDEBAR SETTINGS (Dark Mode + Language) ===================== */
+.sidebar-settings {
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-settings.collapsed {
+  flex-direction: row;
+  justify-content: center;
+}
+
+.sidebar-settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.sidebar-settings-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.sidebar-lang-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a2e4a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.sidebar-lang-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  width: 100%;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.sidebar-lang-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.sidebar-lang-item.active {
+  background: rgba(26,86,219,0.3);
+  color: white;
+}
+
+/* ===================== DARK MODE STYLES ===================== */
+html.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+html.dark .stat-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+html.dark .data-table th {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+html.dark .data-table td {
+  color: #cbd5e1;
+  border-color: #334155;
+}
+
+html.dark .data-table tr:hover td {
+  background: #1e293b;
+}
+
+html.dark .page-header {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html.dark .form-input {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+html.dark .modal-content {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+html.dark .bg-white {
+  background: #1e293b;
+}
+
+html.dark .text-gray-800,
+html.dark .text-gray-700 {
+  color: #e2e8f0;
+}
+
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+  color: #94a3b8;
+}
+
+html.dark .border-gray-200,
+html.dark .border-gray-100 {
+  border-color: #334155;
+}
+
+html.dark .btn-outline {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+html.dark .btn-outline:hover {
+  background: #334155;
+}
+
+html.dark input::placeholder {
+  color: #64748b;
+}

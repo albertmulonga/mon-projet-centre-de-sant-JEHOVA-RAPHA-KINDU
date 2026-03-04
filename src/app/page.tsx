@@ -692,6 +692,57 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== EQUIPE / TRAVAILLEURS SECTION ===== */}
+      <section id="equipe" className="py-20 relative" style={{ background: "#0a1628" }}>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-4"
+              style={{ background: "rgba(14,159,110,0.15)", color: "#6ee7b7", border: "1px solid rgba(14,159,110,0.3)" }}
+            >
+              👥 Notre Équipe
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-4">L&apos;Équipe du Centre Médical</h3>
+            <p className="text-blue-300 max-w-2xl mx-auto">
+              Une équipe dédiée de professionnels de santé engagés à为您提供优质的医疗服务
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[
+              { name: "Dr. M. K.", role: "Médecin Chef", icon: "🩺", color: "#3b82f6" },
+              { name: "Inf. J. D.", role: "Infirmière en Chef", icon: "💉", color: "#10b981" },
+              { name: "Dr. P. L.", role: "Laborantin", icon: "🔬", color: "#8b5cf6" },
+              { name: "M. T. B.", role: "Pharmacien", icon: "💊", color: "#f59e0b" },
+              { name: "Mme S. M.", role: "Caissière", icon: "💰", color: "#06b6d4" },
+              { name: "M. R. K.", role: "Administrateur", icon: "👑", color: "#ef4444" },
+            ].map((member, i) => (
+              <div
+                key={i}
+                className="rounded-2xl p-4 text-center transition-all hover:scale-105 hover:-translate-y-1"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <div
+                  className="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-2xl mb-3"
+                  style={{ background: `${member.color}20`, border: `2px solid ${member.color}40` }}
+                >
+                  {member.icon}
+                </div>
+                <h4 className="text-white font-semibold text-sm mb-1">{member.name}</h4>
+                <p className="text-xs" style={{ color: member.color }}>{member.role}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-blue-400 text-xs mt-8">
+            💡 Cliquez sur "Créer Utilisateur" pour ajouter les membres de votre équipe
+          </p>
+        </div>
+      </section>
+
       {/* ===== FOOTER ===== */}
       <footer
         className="py-8 text-center"

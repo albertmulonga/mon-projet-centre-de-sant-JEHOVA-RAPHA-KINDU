@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useApp } from "@/context/AppContext";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Utilisateur {
@@ -12,6 +13,7 @@ interface Utilisateur {
   dernierLogin: string;
   permissions: string[];
   telephone?: string;
+  photo?: string;
 }
 
 // ─── Admin account (always present, read-only) ────────────────────────────────
@@ -24,6 +26,7 @@ const ADMIN_USER: Utilisateur = {
   statut: "Actif",
   dernierLogin: new Date().toLocaleString("fr-FR"),
   permissions: ["all"],
+  photo: "",
 };
 
 function loadUsers(): Utilisateur[] {
@@ -37,7 +40,6 @@ function loadUsers(): Utilisateur[] {
 }
 
 function saveExtraUsers(users: Utilisateur[]) {
-  // Never save the admin account (index 0) — it's always hardcoded
   localStorage.setItem("hospital_users", JSON.stringify(users));
 }
 
@@ -77,10 +79,23 @@ export default function UtilisateursPage() {
   const [success, setSuccess] = useState("");
   const [formError, setFormError] = useState("");
   const [newUser, setNewUser] = useState({
-    nom: "", email: "", password: "", confirmPassword: "", role: "Médecin", telephone: "",
+    nom: "", email: "", password: "", confirmPassword: "", role: "Médecin", telephone: "", photo: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { darkMode } = useApp();
 
   const roleCounts = (role: string) => users.filter(u => u.role === role).length;
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewUser({ ...newUser, photo: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,14 +124,14 @@ export default function UtilisateursPage() {
       dernierLogin: "Jamais",
       permissions: rolePermissions[newUser.role] ?? [],
       telephone: newUser.telephone,
+      photo: newUser.photo,
     };
 
-    // Save to localStorage (exclude admin from stored list)
     const extra = [...users.slice(1), created];
     saveExtraUsers(extra);
     setUsers([ADMIN_USER, ...extra]);
     setShowModal(false);
-    setNewUser({ nom: "", email: "", password: "", confirmPassword: "", role: "Médecin", telephone: "" });
+    setNewUser({ nom: "", email: "", password: "", confirmPassword: "", role: "Médecin", telephone: "", photo: "" });
     setSuccess(`✅ Compte créé pour ${created.nom} (${created.email})`);
     setTimeout(() => setSuccess(""), 5000);
   };
@@ -132,7 +147,7 @@ export default function UtilisateursPage() {
   };
 
   const deleteUser = (id: string) => {
-    if (id === "USR-001") return; // cannot delete admin
+    if (id === "USR-001") return;
     const updated = users.filter(u => u.id !== id);
     setUsers(updated);
     saveExtraUsers(updated.slice(1));
@@ -142,8 +157,8 @@ export default function UtilisateursPage() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Gestion des Utilisateurs</h1>
-          <p className="text-gray-500 text-sm mt-1">Seul l&apos;administrateur peut créer des comptes</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Gestion des Utilisateurs</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Seul l'administrateur peut créer des comptes</p>
         </div>
         <button onClick={() => setShowModal(true)} className="btn btn-primary">
           + Nouvel Utilisateur
@@ -171,14 +186,14 @@ export default function UtilisateursPage() {
           <div key={r.role} className="stat-card text-center p-4">
             <div className="text-2xl mb-1">{r.icon}</div>
             <div className="text-xl font-bold" style={{ color: r.color }}>{roleCounts(r.role)}</div>
-            <div className="text-xs text-gray-500">{r.role}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{r.role}</div>
           </div>
         ))}
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+      <div className={`bg-white dark:bg-gray-800 rounded-xl border ${darkMode ? 'border-gray-700' : 'border-gray-200'} overflow-hidden`}>
+        <div className={`flex items-center justify-between p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
           <input type="text" className="form-input max-w-xs" placeholder="🔍 Rechercher un utilisateur..." />
           <select className="form-input w-auto">
             <option>Tous les rôles</option>
@@ -208,19 +223,23 @@ export default function UtilisateursPage() {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td><span className="font-mono text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">{user.id}</span></td>
+                  <td><span className="font-mono text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{user.id}</span></td>
                   <td>
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg" style={{ background: "#f3f4f6" }}>
-                        {roleIcons[user.role]}
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        {user.photo ? (
+                          <img src={user.photo} alt={user.nom} className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          roleIcons[user.role]
+                        )}
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">{user.nom}</div>
+                        <div className="font-medium text-gray-800 dark:text-white">{user.nom}</div>
                         {user.telephone && <div className="text-xs text-gray-400">{user.telephone}</div>}
                       </div>
                     </div>
                   </td>
-                  <td className="text-gray-500 text-sm">{user.email}</td>
+                  <td className="text-gray-500 dark:text-gray-400 text-sm">{user.email}</td>
                   <td><span className={`badge ${roleColors[user.role]}`}>{user.role}</span></td>
                   <td>
                     <div className="flex flex-wrap gap-1">
@@ -236,7 +255,7 @@ export default function UtilisateursPage() {
                       )}
                     </div>
                   </td>
-                  <td className="text-gray-500 text-sm">{user.dernierLogin}</td>
+                  <td className="text-gray-500 dark:text-gray-400 text-sm">{user.dernierLogin}</td>
                   <td>
                     <span className={`badge ${user.statut === "Actif" ? "badge-success" : "badge-gray"}`}>
                       {user.statut === "Actif" ? "🟢" : "🔴"} {user.statut}
@@ -275,18 +294,18 @@ export default function UtilisateursPage() {
       </div>
 
       {/* Logs d'activité */}
-      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-700 mb-4">Journal d&apos;Activité Récent</h3>
+      <div className={`mt-6 bg-white dark:bg-gray-800 rounded-xl border ${darkMode ? 'border-gray-700' : 'border-gray-200'} p-5`}>
+        <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Journal d'Activité Récent</h3>
         <div className="space-y-2">
           {[
             { user: "Administrateur", action: "Connexion au système", time: "07:30", type: "info" },
             { user: "Administrateur", action: "Compte utilisateur créé", time: "08:00", type: "success" },
             { user: "Administrateur", action: "Paramètres mis à jour", time: "09:15", type: "info" },
           ].map((log, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: "#f9fafb" }}>
+            <div key={i} className={`flex items-center gap-3 p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <div className={`w-2 h-2 rounded-full flex-shrink-0 ${log.type === "success" ? "bg-green-400" : log.type === "danger" ? "bg-red-400" : "bg-blue-400"}`}></div>
-              <span className="text-sm font-medium text-gray-700 w-36 flex-shrink-0">{log.user}</span>
-              <span className="text-sm text-gray-600 flex-1">{log.action}</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200 w-36 flex-shrink-0">{log.user}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300 flex-1">{log.action}</span>
               <span className="text-xs text-gray-400">{log.time}</span>
             </div>
           ))}
@@ -297,9 +316,9 @@ export default function UtilisateursPage() {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-800">Créer un Utilisateur</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+            <div className={`flex items-center justify-between p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Créer un Utilisateur</h2>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl">×</button>
             </div>
             <form className="p-6 space-y-4" onSubmit={handleCreateUser}>
               {formError && (
@@ -307,9 +326,38 @@ export default function UtilisateursPage() {
                   ⚠️ {formError}
                 </div>
               )}
+              
+              {/* Photo Upload */}
+              <div className="flex flex-col items-center mb-4">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-blue-500">
+                    {newUser.photo ? (
+                      <img src={newUser.photo} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-4xl">👤</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg shadow-lg hover:bg-blue-600"
+                  >
+                    📷
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Cliquez pour ajouter une photo</p>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="form-label">Nom complet *</label>
+                  <label className="form-label dark:text-gray-300">Nom complet *</label>
                   <input
                     type="text"
                     className="form-input"
@@ -319,7 +367,7 @@ export default function UtilisateursPage() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Email *</label>
+                  <label className="form-label dark:text-gray-300">Email *</label>
                   <input
                     type="email"
                     className="form-input"
@@ -329,7 +377,7 @@ export default function UtilisateursPage() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Rôle *</label>
+                  <label className="form-label dark:text-gray-300">Rôle *</label>
                   <select
                     className="form-input"
                     value={newUser.role}
@@ -345,7 +393,7 @@ export default function UtilisateursPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Téléphone</label>
+                  <label className="form-label dark:text-gray-300">Téléphone</label>
                   <input
                     type="tel"
                     className="form-input"
@@ -355,7 +403,7 @@ export default function UtilisateursPage() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Mot de passe *</label>
+                  <label className="form-label dark:text-gray-300">Mot de passe *</label>
                   <input
                     type="password"
                     className="form-input"
@@ -365,7 +413,7 @@ export default function UtilisateursPage() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">Confirmer mot de passe *</label>
+                  <label className="form-label dark:text-gray-300">Confirmer mot de passe *</label>
                   <input
                     type="password"
                     className="form-input"
@@ -379,10 +427,10 @@ export default function UtilisateursPage() {
                 className="p-3 rounded-xl text-sm"
                 style={{ background: "#eff6ff", color: "#1e40af", border: "1px solid #bfdbfe" }}
               >
-                ℹ️ Les permissions seront attribuées automatiquement selon le rôle sélectionné. L&apos;utilisateur pourra se connecter avec cet email et ce mot de passe.
+                ℹ️ Les permissions seront attribuées automatiquement selon le rôle sélectionné. L'utilisateur pourra se connecter avec cet email et ce mot de passe.
               </div>
               <div className="flex gap-3">
-                <button type="submit" className="btn btn-primary flex-1">✅ Créer l&apos;Utilisateur</button>
+                <button type="submit" className="btn btn-primary flex-1">✅ Créer l'Utilisateur</button>
                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-outline">Annuler</button>
               </div>
             </form>
