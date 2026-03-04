@@ -78,3 +78,5 @@ All linked by: ID_patient, ID_consultation, ID_facture
 |------|---------|
 | Initial | Template created with base setup |
 | 2024-03-04 | Complete hospital management system built |
+| 2024-03-04 | Redesigned home page: professional hospital SVG illustration, animated background, services/about/contact sections |
+| 2024-03-04 | Redesigned login page: email + password fields, math CAPTCHA (auto-generated, resets on wrong answer), doctor SVG illustration, show/hide password |
