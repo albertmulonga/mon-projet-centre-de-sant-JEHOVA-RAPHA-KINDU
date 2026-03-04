@@ -63,27 +63,27 @@ const menuItems: MenuSection[] = [
 const rolePermissions: Record<string, { sections: string[], items: string[] }> = {
   admin: { 
     sections: ["PRINCIPAL", "RÉCEPTION", "GESTION MÉDICALE", "ADMINISTRATION", "SYSTÈME"],
-    items: ["patients", "consultations", "laboratoire", "medicaments", "hospitalisation", "factures", "bon-sortie", "rapports", "utilisateurs", "parametres"]
+    items: ["dashboard", "patients", "consultations", "laboratoire", "medicaments", "hospitalisation", "factures", "bon-sortie", "rapports", "utilisateurs", "parametres"]
   },
   medecin: { 
     sections: ["PRINCIPAL", "GESTION MÉDICALE"],
-    items: ["consultations", "laboratoire", "medicaments", "hospitalisation"]
+    items: ["dashboard", "consultations", "laboratoire", "medicaments", "hospitalisation"]
   },
   infirmier: { 
     sections: ["PRINCIPAL", "RÉCEPTION", "GESTION MÉDICALE"],
-    items: ["patients", "hospitalisation"]
+    items: ["dashboard", "patients", "hospitalisation"]
   },
   caissier: { 
     sections: ["PRINCIPAL", "ADMINISTRATION"],
-    items: ["factures", "rapports"]
+    items: ["dashboard", "factures", "rapports"]
   },
   laborantin: { 
     sections: ["PRINCIPAL", "GESTION MÉDICALE"],
-    items: ["laboratoire"]
+    items: ["dashboard", "laboratoire"]
   },
   pharmacien: { 
     sections: ["PRINCIPAL", "GESTION MÉDICALE"],
-    items: ["medicaments"]
+    items: ["dashboard", "medicaments"]
   },
 };
 
