@@ -59,14 +59,32 @@ const menuItems: MenuSection[] = [
   }
 ];
 
-// Permissions based on database roles
-const rolePermissions: Record<string, string[]> = {
-  admin: ["PRINCIPAL", "ADMINISTRATION", "SYSTÈME"],
-  medecin: ["PRINCIPAL", "GESTION MÉDICALE"],
-  infirmier: ["PRINCIPAL", "GESTION MÉDICALE"],
-  caissier: ["PRINCIPAL", "ADMINISTRATION"],
-  laborantin: ["PRINCIPAL", "GESTION MÉDICALE"],
-  pharmacien: ["PRINCIPAL", "GESTION MÉDICALE"],
+// Permissions: which sections AND which specific items each role can see
+const rolePermissions: Record<string, { sections: string[], items: string[] }> = {
+  admin: { 
+    sections: ["PRINCIPAL", "RÉCEPTION", "GESTION MÉDICALE", "ADMINISTRATION", "SYSTÈME"],
+    items: ["patients", "consultations", "laboratoire", "medicaments", "hospitalisation", "factures", "bon-sortie", "rapports", "utilisateurs", "parametres"]
+  },
+  medecin: { 
+    sections: ["PRINCIPAL", "GESTION MÉDICALE"],
+    items: ["consultations", "laboratoire", "medicaments", "hospitalisation"]
+  },
+  infirmier: { 
+    sections: ["PRINCIPAL", "RÉCEPTION", "GESTION MÉDICALE"],
+    items: ["patients", "hospitalisation"]
+  },
+  caissier: { 
+    sections: ["PRINCIPAL", "ADMINISTRATION"],
+    items: ["factures", "rapports"]
+  },
+  laborantin: { 
+    sections: ["PRINCIPAL", "GESTION MÉDICALE"],
+    items: ["laboratoire"]
+  },
+  pharmacien: { 
+    sections: ["PRINCIPAL", "GESTION MÉDICALE"],
+    items: ["medicaments"]
+  },
 };
 
 const roleIcons: Record<string, string> = {
@@ -259,8 +277,9 @@ export default function Sidebar() {
           {menuItems
             .filter((section) => {
               if (!user) return false;
-              const allowedSections = rolePermissions[user.role] || [];
-              return allowedSections.includes(section.section);
+              const perms = rolePermissions[user.role];
+              if (!perms) return false;
+              return perms.sections.includes(section.section);
             })
             .map((section) => (
             <div key={section.section}>
@@ -268,7 +287,16 @@ export default function Sidebar() {
                 <div className="sidebar-section-title">{section.section}</div>
               )}
               {collapsed && <div className="sidebar-section-divider" />}
-              {section.items.map((item) => {
+              {section.items
+                .filter((item) => {
+                  if (!user) return false;
+                  const perms = rolePermissions[user.role];
+                  if (!perms) return false;
+                  // Extract key from href like "/dashboard/factures" -> "factures"
+                  const itemKey = item.href.split("/").pop() || "";
+                  return perms.items.includes(itemKey);
+                })
+                .map((item) => {
                 const active = isActive(item.href, item.exact);
                 return (
                   <Link
