@@ -119,6 +119,20 @@ if (isset($_GET['logout'])) {
                 </div>
                 
                 <div class="nav-section">
+                    <div class="nav-section-title">Communication</div>
+                    <a href="messages.php" class="nav-item <?= isActive('messages') ?>">
+                        <span class="nav-icon">💬</span>
+                        <span>Messages</span>
+                    </a>
+                    <?php if (canAccess(['admin', 'caissier'])): ?>
+                    <a href="notifications_paiements.php" class="nav-item <?= isActive('notifications_paiements') ?>">
+                        <span class="nav-icon">💳</span>
+                        <span>Paiements</span>
+                    </a>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="nav-section">
                     <div class="nav-section-title">Gestion</div>
                     <?php if (canAccess(['caissier'])): ?>
                     <a href="factures.php" class="nav-item <?= isActive('factures') ?>">
@@ -145,6 +159,10 @@ if (isset($_GET['logout'])) {
                 <div class="nav-section">
                     <div class="nav-section-title">Administration</div>
                     <?php if (canAccess(['admin'])): ?>
+                    <a href="comptes_patients.php" class="nav-item <?= isActive('comptes_patients') ?>">
+                        <span class="nav-icon">🏥</span>
+                        <span>Comptes patients</span>
+                    </a>
                     <a href="utilisateurs.php" class="nav-item <?= isActive('utilisateurs') ?>">
                         <span class="nav-icon">👤</span>
                         <span>Utilisateurs</span>

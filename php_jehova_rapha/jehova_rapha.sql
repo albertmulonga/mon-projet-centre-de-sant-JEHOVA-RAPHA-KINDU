@@ -391,6 +391,138 @@ INSERT INTO parametres_systeme (cle, valeur, description) VALUES
 
 
 -- ============================================================
+-- 15. TABLE : comptes_patients (Auto-inscription patients)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS comptes_patients (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE COMMENT 'Ex: CPT-001',
+  patient_id      INT UNSIGNED NULL COMMENT 'Lien vers patient si validé',
+  nom             VARCHAR(100) NOT NULL,
+  prenom          VARCHAR(100) NOT NULL,
+  email           VARCHAR(150) NULL,
+  telephone       VARCHAR(30)  NOT NULL,
+  mot_de_passe    VARCHAR(255) NOT NULL,
+  date_naissance  DATE         NOT NULL,
+  sexe            ENUM('M','F') NOT NULL,
+  photo_profil    VARCHAR(255) NULL,
+  numero_dossier  VARCHAR(20)  NULL COMMENT 'Numéro hopital du patient',
+  statut_compte   ENUM('en_attente','valide','rejete','desactive') NOT NULL DEFAULT 'en_attente',
+  date_validation DATETIME     NULL,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_telephone (telephone),
+  INDEX idx_statut (statut_compte)
+) ENGINE=InnoDB COMMENT='Comptes patients pour auto-inscription';
+
+
+-- ============================================================
+-- 16. TABLE : messages (Communication interne)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS messages (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE,
+  expediteur_id   INT UNSIGNED NOT NULL,
+  expediteur_type ENUM('utilisateur','patient') NOT NULL,
+  destinataire_id INT UNSIGNED NOT NULL,
+  destinataire_type ENUM('utilisateur','patient','admin') NOT NULL,
+  sujet           VARCHAR(200) NOT NULL,
+  contenu         TEXT         NOT NULL,
+  lu              TINYINT(1)   NOT NULL DEFAULT 0,
+  date_lecture    DATETIME     NULL,
+  parent_id       INT UNSIGNED NULL COMMENT 'Pour réponses',
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_expediteur (expediteur_id, expediteur_type),
+  INDEX idx_destinataire (destinataire_id, destinataire_type),
+  INDEX idx_lu (lu)
+) ENGINE=InnoDB COMMENT='Messages internes entre personnel';
+
+
+-- ============================================================
+-- 17. TABLE : notifications_paiements (Preuves de paiement patients)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS notifications_paiements (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE,
+  patient_id      INT UNSIGNED NOT NULL,
+  montant         DECIMAL(12,2) NOT NULL,
+  mode_paiement   ENUM('mobile_money','virement','especes') NOT NULL,
+  numero_transaction VARCHAR(50)  NULL,
+  preuve_image   VARCHAR(255) NULL COMMENT 'Chemin vers image preuve',
+  description     TEXT         NULL,
+  statut          ENUM('en_attente','valide','rejete') NOT NULL DEFAULT 'en_attente',
+  valide_par      INT UNSIGNED NULL,
+  date_validation DATETIME     NULL,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (patient_id)   REFERENCES patients(id)       ON DELETE CASCADE,
+  FOREIGN KEY (valide_par)   REFERENCES utilisateurs(id)   ON DELETE SET NULL,
+  INDEX idx_patient (patient_id),
+  INDEX idx_statut (statut)
+) ENGINE=InnoDB COMMENT='Notifications de paiement patients';
+
+
+-- ============================================================
+-- 18. TABLE : rendez_vous (Pour patients)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS rendez_vous (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE,
+  patient_id      INT UNSIGNED NOT NULL,
+  medecin_id      INT UNSIGNED NULL,
+  date_rdv        DATETIME     NOT NULL,
+  motif           VARCHAR(255) NOT NULL,
+  statut          ENUM('en_attente','confirme','annule','termine') NOT NULL DEFAULT 'en_attente',
+  notes           TEXT         NULL,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+  FOREIGN KEY (medecin_id) REFERENCES utilisateurs(id) ON DELETE SET NULL,
+  INDEX idx_patient (patient_id),
+  INDEX idx_date (date_rdv),
+  INDEX idx_statut (statut)
+) ENGINE=InnoDB COMMENT='Rendez-vous patients';
+
+
+-- ============================================================
+-- 19. TABLE : commandes_medicaments (Commandes en ligne patients)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS commandes_medicaments (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE,
+  patient_id      INT UNSIGNED NOT NULL,
+  medicament_id   INT UNSIGNED NOT NULL,
+  quantite        INT UNSIGNED NOT NULL DEFAULT 1,
+  prix_total      DECIMAL(10,2) NOT NULL,
+  statut          ENUM('en_attente','confirme','pret','retire','annule') NOT NULL DEFAULT 'en_attente',
+  date_retrait    DATETIME     NULL,
+  notes           TEXT         NULL,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (patient_id)   REFERENCES patients(id)     ON DELETE CASCADE,
+  FOREIGN KEY (medicament_id) REFERENCES medicaments(id)  ON DELETE CASCADE,
+  INDEX idx_patient (patient_id),
+  INDEX idx_statut (statut)
+) ENGINE=InnoDB COMMENT='Commandes médicaments par patients';
+
+
+-- ============================================================
+-- 20. TABLE : photos_profil (Stockage photos)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS photos_profil (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(20)  NOT NULL UNIQUE,
+  proprietaire_id INT UNSIGNED NOT NULL,
+  proprietaire_type ENUM('utilisateur','patient') NOT NULL,
+  fichier         VARCHAR(255) NOT NULL,
+  type_fichier    VARCHAR(50)  NOT NULL DEFAULT 'image/jpeg',
+  taille          INT UNSIGNED NULL,
+  is_active       TINYINT(1)   NOT NULL DEFAULT 1,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_proprietaire (proprietaire_id, proprietaire_type)
+) ENGINE=InnoDB COMMENT='Photos de profil utilisateurs et patients';
+
+
+-- ============================================================
 -- VUES
 -- ============================================================
 CREATE OR REPLACE VIEW v_patients_resume AS
