@@ -28,22 +28,10 @@ function getUsers() {
 }
 
 function generateCaptcha() {
-  const ops = ["+", "-", "×"];
-  const op = ops[Math.floor(Math.random() * ops.length)];
-  let a: number, b: number, answer: number;
-  if (op === "+") {
-    a = Math.floor(Math.random() * 10) + 1;
-    b = Math.floor(Math.random() * 10) + 1;
-    answer = a + b;
-  } else if (op === "-") {
-    a = Math.floor(Math.random() * 10) + 5;
-    b = Math.floor(Math.random() * 5) + 1;
-    answer = a - b;
-  } else {
-    a = Math.floor(Math.random() * 5) + 1;
-    b = Math.floor(Math.random() * 5) + 1;
-    answer = a * b;
-  }
+  const a = Math.floor(Math.random() * 10) + 1;
+  const b = Math.floor(Math.random() * 10) + 1;
+  const op = "+";
+  const answer = a + b;
   return { question: `Combien font ${a} ${op} ${b} = ?`, answer };
 }
 
