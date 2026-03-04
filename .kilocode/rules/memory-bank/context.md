@@ -2,81 +2,88 @@
 
 ## Current State
 
-**Project Status**: ✅ Complete Hospital Management System
+**Project Status**: ✅ Complete Hospital Management System (PHP Version for XAMPP)
 
-A full-featured hospital management web application for **Centre Médical Jéhova Rapha de Kindu** built with Next.js 16, TypeScript, and Tailwind CSS 4.
+A full-featured hospital management web application for **Centre Médical Jéhova Rapha de Kindu** now available in PHP for direct use with XAMPP.
 
-## Recently Completed
+## Recently Completed (PHP Version)
 
-- [x] Professional landing page with medical blue/green gradient design
-- [x] Login page with role-based authentication (6 roles)
-- [x] Dashboard with KPIs, stats, quick actions, recent patients, activity feed
+- [x] Complete PHP application for XAMPP deployment
+- [x] Database with sample data (patients, consultations, medications, rooms, invoices)
+- [x] Landing page with medical blue/green gradient design
+- [x] Login page with CAPTCHA verification and role-based authentication (6 roles)
+- [x] Dashboard with KPIs, stats, quick actions
 - [x] Patients module: registration, search, filters, CRUD
 - [x] Consultations module: medical consultations, prescriptions, diagnoses
 - [x] Laboratory module: exam requests, results management
 - [x] Pharmacy module: stock management, movements, low-stock alerts
 - [x] Hospitalization module: room grid/list view, occupancy tracking, cost calculation
 - [x] Billing module: invoice generation, partial/full payments
-- [x] Discharge module: medical summaries, recommendations, printable
-- [x] Reports module: statistics, bar charts, revenue analysis, top diagnostics
-- [x] Users module: role management, permissions, activity logs
-- [x] Settings module: general config, tariffs, rooms, notifications, security, backup
-- [x] Sidebar navigation with active state highlighting
-- [x] Professional medical color scheme (blue/green/white)
-- [x] Global CSS with reusable components (badges, buttons, forms, tables, modals)
+- [x] Discharge module: medical summaries, recommendations
+- [x] Reports module: statistics, revenue analysis, top diagnostics
+- [x] Users module: role management, permissions
+- [x] Settings module: hospital config, password change
+- [x] Responsive design for mobile and desktop
 
-## Current Structure
+## Current Structure (PHP Version)
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Landing page | ✅ Complete |
-| `src/app/login/page.tsx` | Login with roles | ✅ Complete |
-| `src/app/dashboard/layout.tsx` | Dashboard layout with sidebar | ✅ Complete |
-| `src/app/dashboard/page.tsx` | Main dashboard | ✅ Complete |
-| `src/app/dashboard/patients/page.tsx` | Patient management | ✅ Complete |
-| `src/app/dashboard/consultations/page.tsx` | Consultations | ✅ Complete |
-| `src/app/dashboard/laboratoire/page.tsx` | Laboratory | ✅ Complete |
-| `src/app/dashboard/medicaments/page.tsx` | Pharmacy/Medications | ✅ Complete |
-| `src/app/dashboard/hospitalisation/page.tsx` | Hospitalization | ✅ Complete |
-| `src/app/dashboard/factures/page.tsx` | Billing/Invoices | ✅ Complete |
-| `src/app/dashboard/bon-sortie/page.tsx` | Discharge notes | ✅ Complete |
-| `src/app/dashboard/rapports/page.tsx` | Reports & Statistics | ✅ Complete |
-| `src/app/dashboard/utilisateurs/page.tsx` | User management | ✅ Complete |
-| `src/app/dashboard/parametres/page.tsx` | System settings | ✅ Complete |
-| `src/components/Sidebar.tsx` | Navigation sidebar | ✅ Complete |
-| `src/app/globals.css` | Medical design system | ✅ Complete |
+| `php_jehova_rapha/index.php` | Landing page | ✅ Complete |
+| `php_jehova_rapha/login.php` | Login with CAPTCHA | ✅ Complete |
+| `php_jehova_rapha/dashboard.php` | Main layout with sidebar | ✅ Complete |
+| `php_jehova_rapha/pages/dashboard.php` | Dashboard stats | ✅ Complete |
+| `php_jehova_rapha/pages/patients.php` | Patient management | ✅ Complete |
+| `php_jehova_rapha/pages/consultations.php` | Consultations | ✅ Complete |
+| `php_jehova_rapha/pages/laboratoire.php` | Laboratory | ✅ Complete |
+| `php_jehova_rapha/pages/medicaments.php` | Pharmacy/Medications | ✅ Complete |
+| `php_jehova_rapha/pages/hospitalisation.php` | Hospitalization | ✅ Complete |
+| `php_jehova_rapha/pages/factures.php` | Billing/Invoices | ✅ Complete |
+| `php_jehova_rapha/pages/bon-sortie.php` | Discharge notes | ✅ Complete |
+| `php_jehova_rapha/pages/rapports.php` | Reports & Statistics | ✅ Complete |
+| `php_jehova_rapha/pages/utilisateurs.php` | User management | ✅ Complete |
+| `php_jehova_rapha/pages/parametres.php` | System settings | ✅ Complete |
+| `php_jehova_rapha/config/db.php` | Database configuration | ✅ Complete |
+| `php_jehova_rapha/config/auth.php` | Authentication functions | ✅ Complete |
+| `php_jehova_rapha/assets/css/style.css` | Responsive CSS | ✅ Complete |
+| `php_jehova_rapha/assets/js/main.js` | JavaScript functions | ✅ Complete |
+| `php_jehova_rapha/jehova_rapha.sql` | Database with sample data | ✅ Complete |
+| `php_jehova_rapha/README.md` | Installation instructions | ✅ Complete |
 
-## User Roles
+## User Roles (PHP Version)
 
-| Role | Icon | Access |
-|------|------|--------|
-| Administrateur | 👑 | Full access |
-| Médecin | 🩺 | Consultations, prescriptions, lab |
-| Infirmier | 💉 | Patients, hospitalization |
-| Caissier | 💰 | Billing, payments |
-| Laborantin | 🔬 | Laboratory |
-| Pharmacien | 💊 | Medications, stock |
+| Role | Access |
+|------|--------|
+| Administrateur | Full access |
+| Médecin | Consultations, prescriptions, lab, hospitalization, discharge |
+| Infirmier | Patients, hospitalization |
+| Caissier | Billing, payments |
+| Laborantin | Laboratory |
+| Pharmacien | Medications, stock |
 
-## Patient Flow
+## Test Accounts
 
-```
-Patient → Consultation → Examen Labo → Médicaments →
-[Si grave] → Hospitalisation → Facturation → Paiement → Bon de Sortie
-```
-
-All linked by: ID_patient, ID_consultation, ID_facture
-
-## Design System
-
-- **Colors**: Blue (#1a56db), Green (#0e9f6e), White
-- **Sidebar**: Dark navy gradient (#1e3a5f → #1a2e4a)
-- **Components**: `.stat-card`, `.badge-*`, `.btn-*`, `.form-input`, `.data-table`, `.modal-overlay`
+| Role | Email | Password |
+|------|-------|----------|
+| Administrateur | admin@jehovarapha.com | admin123 |
+| Médecin | dr.mukamba@jehovarapha.com | admin123 |
+| Infirmier | inf.mwamba@jehovarapha.com | admin123 |
+| Caissier | caissier.kasongo@jehovarapha.com | admin123 |
+| Laborantin | labo.mbuji@jehovarapha.com | admin123 |
+| Pharmacien | pharma.kabongo@jehovarapha.com | admin123 |
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
-| Initial | Template created with base setup |
+| 2024-03-04 | Next.js version created |
 | 2024-03-04 | Complete hospital management system built |
-| 2024-03-04 | Redesigned home page: professional hospital SVG illustration, animated background, services/about/contact sections |
-| 2024-03-04 | Redesigned login page: email + password fields, math CAPTCHA (auto-generated, resets on wrong answer), doctor SVG illustration, show/hide password |
+| 2024-03-04 | Landing page redesigned with professional medical design |
+| 2024-03-04 | Login page with CAPTCHA verification |
+| 2024-03-04 | PHP version created for XAMPP deployment |
+
+## Installation (XAMPP)
+
+1. Copy `php_jehova_rapha` folder to `C:\xampp\htdocs\`
+2. Import `jehova_rapha.sql` via phpMyAdmin
+3. Open http://localhost/php_jehova_rapha/ in browser
