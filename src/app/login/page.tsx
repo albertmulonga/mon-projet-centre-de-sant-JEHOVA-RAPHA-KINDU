@@ -3,6 +3,30 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// ─── Credentials store ───────────────────────────────────────────────────────
+// Admin account is fixed. Other users are created by the admin in the
+// "Utilisateurs" module. For this frontend-only demo we keep a simple
+// in-memory list that can be extended later with a real database.
+const ADMIN_CREDENTIALS = {
+  email: "jehovarapha@gmail.com",
+  password: "admin.com",
+  role: "admin",
+  nom: "Administrateur",
+};
+
+// Additional users created by admin (persisted in localStorage in a real app)
+// For the demo we start with only the admin account.
+function getUsers() {
+  if (typeof window === "undefined") return [ADMIN_CREDENTIALS];
+  try {
+    const stored = localStorage.getItem("hospital_users");
+    const extra: typeof ADMIN_CREDENTIALS[] = stored ? JSON.parse(stored) : [];
+    return [ADMIN_CREDENTIALS, ...extra];
+  } catch {
+    return [ADMIN_CREDENTIALS];
+  }
+}
+
 function generateCaptcha() {
   const ops = ["+", "-", "×"];
   const op = ops[Math.floor(Math.random() * ops.length)];
@@ -52,7 +76,21 @@ export default function LoginPage() {
       return;
     }
 
+    // Validate credentials against the user store
+    const users = getUsers();
+    const match = users.find(
+      (u) => u.email === form.email && u.password === form.password
+    );
+
+    if (!match) {
+      setError("Email ou mot de passe incorrect. Contactez l'administrateur si vous n'avez pas encore de compte.");
+      refreshCaptcha();
+      return;
+    }
+
     setLoading(true);
+    // Store current user info in sessionStorage for the dashboard
+    sessionStorage.setItem("current_user", JSON.stringify({ email: match.email, role: match.role, nom: match.nom }));
     setTimeout(() => {
       router.push("/dashboard");
     }, 1000);
@@ -300,6 +338,7 @@ export default function LoginPage() {
                     placeholder="votre@email.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    autoComplete="email"
                   />
                 </div>
               </div>
