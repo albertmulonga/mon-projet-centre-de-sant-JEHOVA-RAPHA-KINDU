@@ -138,6 +138,65 @@ $medicaments = $stmt->fetchAll();
 $stmt = $pdo->query("SELECT * FROM v_stock_alertes WHERE niveau_stock IN ('rupture', 'critique')");
 $alertes = $stmt->fetchAll();
 ?>
+
+<!-- Pharmacy Loading Overlay -->
+<div id="pharmacyLoader" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a5276 0%, #148f77 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+">
+    <div style="
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 1.5s ease-in-out infinite;
+    ">
+        <!-- Pharmacy Cross with Green Circle -->
+        <svg width="70" height="70" viewBox="0 0 24 24" fill="none">
+            <!-- Green circle background -->
+            <circle cx="12" cy="12" r="11" fill="#2ecc71"/>
+            <!-- White cross -->
+            <rect x="9" y="4" width="6" height="16" rx="1" fill="white"/>
+            <rect x="4" y="9" width="16" height="6" rx="1" fill="white"/>
+            <!-- Snake -->
+            <path d="M12 7 C10 7 8 9 8 11 C8 13 9 14 10 15 C11 16 12 16 12 16" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+    </div>
+    <h2 style="color: white; margin-top: 20px; font-size: 1.5rem;">Pharmacie</h2>
+    <p style="color: rgba(255,255,255,0.8); margin-top: 10px;">Chargement en cours...</p>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+</style>
+
+<script>
+// Hide loader after 5 seconds
+setTimeout(function() {
+    const loader = document.getElementById('pharmacyLoader');
+    loader.style.opacity = '0';
+    setTimeout(function() {
+        loader.style.display = 'none';
+    }, 500);
+}, 5000);
+</script>
+
             <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h1 class="page-title">Pharmacie</h1>

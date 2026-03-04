@@ -78,6 +78,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="login-page">
+        <!-- Pharmacy Logo (Green Circle) -->
+        <div class="pharmacy-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <!-- Cross/Medical Symbol -->
+                <rect x="9" y="2" width="6" height="20" rx="1" fill="white"/>
+                <rect x="2" y="9" width="20" height="6" rx="1" fill="white"/>
+                <!-- Snake circle -->
+                <path d="M12 6 C8 6 6 9 6 12 C6 16 8 19 12 19 C16 19 18 16 18 12 C18 9 16 6 12 6" stroke="white" stroke-width="1.5" fill="none"/>
+            </svg>
+        </div>
+        
+        <!-- Microscope Decoration -->
+        <svg class="microscope-decoration" viewBox="0 0 100 100" fill="white">
+            <ellipse cx="50" cy="15" rx="15" ry="10"/>
+            <rect x="47" y="25" width="6" height="20"/>
+            <ellipse cx="50" cy="50" rx="25" ry="15"/>
+            <rect x="45" y="60" width="10" height="25"/>
+            <ellipse cx="50" cy="88" rx="20" ry="5"/>
+        </svg>
+        
         <div class="login-container">
             <div class="login-card">
                 <div class="login-header">
