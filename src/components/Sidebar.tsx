@@ -93,7 +93,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [user] = useState<{ nom: string; role: string; email: string } | null>(() => {
     if (typeof window === "undefined") return null;
-    const stored = sessionStorage.getItem("hospital_user");
+    const stored = sessionStorage.getItem("current_user");
     if (!stored) return null;
     try { return JSON.parse(stored); } catch { return null; }
   });
@@ -106,7 +106,7 @@ export default function Sidebar() {
 
   const handleConfirmYes = () => {
     setShowLogoutConfirm(false);
-    sessionStorage.removeItem("hospital_user");
+    sessionStorage.removeItem("current_user");
     router.push("/");
   };
 
@@ -179,7 +179,8 @@ export default function Sidebar() {
         <nav className="sidebar-nav">
           {menuItems
             .filter((section) => {
-              const allowedSections = user ? rolePermissions[user.role] : [];
+              if (!user) return false;
+              const allowedSections = rolePermissions[user.role] || [];
               return allowedSections.includes(section.section);
             })
             .map((section) => (
