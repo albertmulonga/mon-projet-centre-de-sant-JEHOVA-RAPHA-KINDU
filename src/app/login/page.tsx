@@ -78,7 +78,12 @@ export default function LoginPage() {
 
     setLoading(true);
     // Store current user info in sessionStorage for the dashboard
-    sessionStorage.setItem("current_user", JSON.stringify({ email: match.email, role: match.role, nom: match.nom }));
+    // Store role in lowercase for consistent comparison in sidebar
+    sessionStorage.setItem("current_user", JSON.stringify({ 
+      email: match.email, 
+      role: match.role.toLowerCase(), 
+      nom: match.nom 
+    }));
     setTimeout(() => {
       router.push("/dashboard");
     }, 1000);

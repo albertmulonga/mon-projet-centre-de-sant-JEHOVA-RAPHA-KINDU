@@ -118,11 +118,10 @@ const languages: { code: Language; name: string; flag: string }[] = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { darkMode, toggleDarkMode, language, setLanguage } = useApp();
+  const { darkMode, language, setLanguage } = useApp();
   const [user, setUser] = useState<{ nom: string; role: string; email: string; photo?: string } | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showLangMenu, setShowLangMenu] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -145,20 +144,12 @@ export default function Sidebar() {
         }
       }
     }
-  }, []);
+  }, [pathname]); // Re-check sessionStorage when pathname changes
 
-  const confirmLogout = () => {
-    setShowLogoutConfirm(true);
-  };
-
+  // Logout functions - now handled in Header component
   const handleConfirmYes = () => {
-    setShowLogoutConfirm(false);
     sessionStorage.removeItem("current_user");
     router.push("/");
-  };
-
-  const handleConfirmNo = () => {
-    setShowLogoutConfirm(false);
   };
 
   const isActive = (href: string, exact?: boolean) => {
@@ -224,53 +215,8 @@ export default function Sidebar() {
                 </div>
               </div>
             )}
-            {!collapsed && (
-              <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" title="En ligne"></div>
-            )}
           </div>
         )}
-
-        {/* Settings Row: Dark Mode + Language */}
-        <div className={`sidebar-settings ${collapsed ? "collapsed" : ""}`}>
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="sidebar-settings-btn"
-            title={darkMode ? "Mode Clair" : "Mode Sombre"}
-          >
-            <span className="text-base">{darkMode ? "☀️" : "🌙"}</span>
-            {!collapsed && <span>{darkMode ? "Clair" : "Sombre"}</span>}
-          </button>
-
-          {/* Language Selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowLangMenu(!showLangMenu)}
-              className="sidebar-settings-btn"
-              title="Langue"
-            >
-              <span className="text-base">{languages.find(l => l.code === language)?.flag || "🌐"}</span>
-              {!collapsed && <span>{languages.find(l => l.code === language)?.name || "Langue"}</span>}
-            </button>
-            {showLangMenu && !collapsed && (
-              <div className="sidebar-lang-menu">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setShowLangMenu(false);
-                    }}
-                    className={`sidebar-lang-item ${language === lang.code ? "active" : ""}`}
-                  >
-                    <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Navigation */}
         <nav className="sidebar-nav">
@@ -316,48 +262,7 @@ export default function Sidebar() {
             </div>
           ))}
         </nav>
-
-        {/* Logout */}
-        <div className="sidebar-footer">
-          <button
-            onClick={confirmLogout}
-            className={`sidebar-logout ${collapsed ? "collapsed" : ""}`}
-            title="Déconnexion"
-          >
-            <span className="text-base">🚪</span>
-            {!collapsed && <span>Déconnexion</span>}
-          </button>
-        </div>
       </aside>
-
-      {/* Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: "#fef2f2" }}>
-                <span className="text-3xl">🚪</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Voulez-vous quitter l'application ?</h3>
-              <p className="text-gray-500 dark:text-gray-300 text-sm mb-6">Vous serez déconnecté et redirigé vers la page d'accueil.</p>
-              <div className="flex gap-3">
-                <button
-                  onClick={handleConfirmNo}
-                  className="flex-1 btn btn-outline py-3"
-                >
-                  ❌ Non
-                </button>
-                <button
-                  onClick={handleConfirmYes}
-                  className="flex-1 btn btn-danger py-3"
-                >
-                  ✅ Oui, quitter
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
