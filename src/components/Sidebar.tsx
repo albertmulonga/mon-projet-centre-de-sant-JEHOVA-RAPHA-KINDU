@@ -26,8 +26,8 @@ const menuItems: MenuSection[] = [
     section: "RÉCEPTION",
     items: [
       { href: "/dashboard/patients", icon: "📝", label: "Enregistrer Patient" },
-      { href: "/dashboard/patients", icon: "📋", label: "Admissions" },
-      { href: "/dashboard/patients", icon: "📅", label: "Rendez-vous" },
+      { href: "/dashboard/admissions", icon: "📋", label: "Admissions" },
+      { href: "/dashboard/rdv", icon: "📅", label: "Rendez-vous" },
     ]
   },
   {
@@ -56,6 +56,17 @@ const menuItems: MenuSection[] = [
     ]
   }
 ];
+
+// Permissions pour chaque rôle - quelles sections peuvent voir
+const rolePermissions: Record<string, string[]> = {
+  admin: ["PRINCIPAL", "ADMINISTRATION", "SYSTÈME"], // Admin supervise seulement
+  medecin: ["PRINCIPAL", "GESTION MÉDICALE"],
+  infirmier: ["PRINCIPAL", "GESTION MÉDICALE"],
+  caissier: ["PRINCIPAL", "ADMINISTRATION"],
+  laborantin: ["PRINCIPAL", "GESTION MÉDICALE"],
+  pharmacien: ["PRINCIPAL", "GESTION MÉDICALE"],
+  receptionniste: ["PRINCIPAL", "RÉCEPTION"],
+};
 
 const roleIcons: Record<string, string> = {
   admin: "👑",
@@ -166,7 +177,12 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="sidebar-nav">
-          {menuItems.map((section) => (
+          {menuItems
+            .filter((section) => {
+              const allowedSections = user ? rolePermissions[user.role] : [];
+              return allowedSections.includes(section.section);
+            })
+            .map((section) => (
             <div key={section.section}>
               {!collapsed && (
                 <div className="sidebar-section-title">{section.section}</div>
